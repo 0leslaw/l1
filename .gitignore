@@ -2,3 +2,6 @@ data.csv
 .venv
 __pycache__
 A_star_graph.pkl
+A_star_graph_lines.pkl
+sprawko.pdf
+sprawko.docx

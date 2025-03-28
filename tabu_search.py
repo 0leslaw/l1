@@ -3,23 +3,25 @@ from functools import reduce
 from random import shuffle
 import random 
 from algo import A_star
+from A_star_stops_minimizer import A_star_stops
 from stops_enum import StopsEnum
 
-def tabu_search(start, L, start_time):
+def tabu_search(start, L, start_time, minimize="t"):
     LIMIT = 3
     results = []
-    prev_cost = timedelta(days=1000)
+    prev_cost = datetime(year=2000, month=1, day=1) if minimize == "t" else float("inf")
     tabu = []
     best_results = list(L)
-    best_cost = timedelta(days=1000)
+    best_cost = datetime(year=2000, month=1, day=1) if minimize == "t" else float("inf")
+    travel_function = A_star if minimize == "t" else A_star_stops
     for _ in range(LIMIT):
-        results.append(A_star(start, L[0], start_time))
+        results.append(travel_function(start, L[0], start_time))
         for i in range(1, len(L)):
-            results.append(A_star(L[i-1], L[i], results[-1][-1]))
-        results.append(A_star(L[-1], start, results[-1][-1]))
+            results.append(travel_function(L[i-1], L[i], results[-1][-1]))
+        results.append(travel_function(L[-1], start, results[-1][-1]))
         for r in results:
             print(r[-1])
-        cost = results[-1][-1] - start_time
+        cost = results[-1][-1]
         print(cost)
         results = []
         if cost < prev_cost:

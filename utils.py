@@ -82,6 +82,46 @@ def get_result_costs(G, start, end):
     # print(f"BEST EDGES: {best_edges}\n\nBEST STOPS: {stops}")
     return cost
 
+def get_result_edges_stops(G, start, end):
+    stops = [end]
+    curr_node = end
+    switches = G.nodes[end]["g"]
+    lines = []
+    # print(end)
+    while curr_node != start:
+        lines.append(G.nodes[curr_node]["current_available_stops"])
+
+        curr_node = G.nodes[curr_node]["came_from_node"]
+        stops.append(curr_node)
+    stops = stops
+    print()
+    lines = get_min_lines(lines)
+    for i in range(len(lines)):
+        print(stops[i], lines[i])
+    # print(f"BEST EDGES: {best_edges}\n\nBEST STOPS: {stops}")
+    return stops, lines, switches
+
+
+def get_min_lines(lines: list[set]):
+    lines = lines[::-1]
+    breakd = 0
+    c_inters = lines[0]
+    for i in range(1, len(lines)):
+        if not lines[i].intersection(lines[i-1]) :
+            for j in range(breakd, i):
+                lines[j] = c_inters
+            breakd = i
+            c_inters = lines[i]
+            
+        else:
+            c_inters = c_inters.intersection(lines[i])
+    
+    for j in range(breakd, len(lines)):
+        lines[j] = c_inters
+            
+    return lines[::-1]
+            
+    
 def get_result_edges(G, start, end):
     best_edges = []
     stops = [end]
@@ -97,4 +137,4 @@ def get_result_edges(G, start, end):
     stops = stops
     print()
     # print(f"BEST EDGES: {best_edges}\n\nBEST STOPS: {stops}")
-    return best_edges, stops, get_result_costs(G, start, end), time_of_arrival_at_stop_in_current_best_path(G, end)
+    return best_edges, stops, time_of_arrival_at_stop_in_current_best_path(G, end)
